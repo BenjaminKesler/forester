@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Elderwood</title>
+    <meta
+      name="description"
+      content="Elderwood — harvest the heartwood of an ancient, mystical forest. An idle clicker game."
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text y='14' font-size='14'>🌳</text></svg>"
+    />
+  </head>
+  <body>
+    <div id="app">
+      <header class="topbar">
+        <div class="brand">
+          <h1>Elderwood</h1>
+          <p class="tagline">Harvest the heartwood of an ancient, mystical forest.</p>
+        </div>
+        <div class="stats">
+          <div class="stat">
+            <span id="heartwood" class="stat-value">0 🪵</span>
+            <span class="stat-label">Heartwood</span>
+          </div>
+          <div class="stat">
+            <span id="per-second" class="stat-value">0 🪵/s</span>
+            <span class="stat-label">from the forest</span>
+          </div>
+        </div>
+      </header>
+
+      <main class="layout">
+        <!-- Manual harvesting: the Elder Tree -->
+        <section class="grove">
+          <div id="floaters" class="floaters"></div>
+          <button id="elder-tree" class="elder-tree" aria-label="Chop the Elder Tree">
+            <span class="tree-glyph">🌳</span>
+          </button>
+          <div class="tree-hp">
+            <div class="tree-hp-bar">
+              <div id="tree-hp-fill" class="tree-hp-fill"></div>
+            </div>
+            <span id="tree-hp-text" class="tree-hp-text">0 / 0 HP</span>
+          </div>
+          <p class="tree-meta">
+            <span id="per-click" class="per-click">1 per strike</span>
+            <span class="dot">•</span>
+            Ancient trees felled: <strong id="tree-felled">0</strong>
+          </p>
+        </section>
+
+        <!-- Idle production: grow your forest & upgrades -->
+        <section class="shop">
+          <div class="shop-panel">
+            <h2>Grow the Forest</h2>
+            <div id="generators" class="shop-list"></div>
+          </div>
+          <div class="shop-panel">
+            <h2>Ancient Lore</h2>
+            <div id="upgrades" class="shop-list"></div>
+          </div>
+        </section>
+      </main>
+
+      <footer class="footer">
+        <button id="reset-btn" class="reset-btn">Start Anew</button>
+        <span class="footer-note">Progress saves automatically to this browser.</span>
+      </footer>
+    </div>
+
+    <script type="module" src="js/main.js"></script>
+  </body>
+</html>

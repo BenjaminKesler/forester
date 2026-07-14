@@ -1,0 +1,385 @@
+/* ===========================================================================
+   Elderwood — ancient mystical forest aesthetic.
+   Deep pine greens, drifting mist, and warm heartwood-amber accents.
+   =========================================================================== */
+
+:root {
+  --bg-0: #0a1410;
+  --bg-1: #0f1d17;
+  --panel: rgba(23, 42, 33, 0.72);
+  --panel-edge: rgba(120, 200, 150, 0.16);
+  --moss: #6fbf8f;
+  --moss-dim: #4f8f6a;
+  --amber: #e8b96a;
+  --amber-bright: #ffd98a;
+  --text: #dfeee4;
+  --text-dim: #90a89a;
+  --danger: #c96a6a;
+  --hp: #c9564a;
+  --hp-track: rgba(0, 0, 0, 0.35);
+  --shadow: 0 10px 40px rgba(0, 0, 0, 0.45);
+  --radius: 14px;
+  font-size: 16px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+  color: var(--text);
+  background:
+    radial-gradient(1200px 700px at 70% -10%, #1b3a2a 0%, transparent 60%),
+    radial-gradient(900px 600px at 10% 110%, #14281e 0%, transparent 55%),
+    linear-gradient(180deg, var(--bg-1), var(--bg-0));
+  background-attachment: fixed;
+  overflow-x: hidden;
+}
+
+/* Soft drifting mist over the whole scene. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: -20%;
+  pointer-events: none;
+  background:
+    radial-gradient(600px 300px at 20% 30%, rgba(160, 220, 180, 0.05), transparent 70%),
+    radial-gradient(500px 260px at 80% 70%, rgba(200, 230, 200, 0.04), transparent 70%);
+  animation: drift 24s ease-in-out infinite alternate;
+  z-index: 0;
+}
+@keyframes drift {
+  from { transform: translate3d(-2%, -1%, 0); }
+  to   { transform: translate3d(3%, 2%, 0); }
+}
+
+#app {
+  position: relative;
+  z-index: 1;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 1.5rem 1.25rem 2.5rem;
+}
+
+/* --- Top bar -------------------------------------------------------------- */
+
+.topbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--panel-edge);
+}
+
+.brand h1 {
+  margin: 0;
+  font-size: 2rem;
+  letter-spacing: 0.02em;
+  color: var(--amber-bright);
+  text-shadow: 0 0 24px rgba(232, 185, 106, 0.25);
+}
+.tagline {
+  margin: 0.15rem 0 0;
+  color: var(--text-dim);
+  font-size: 0.9rem;
+}
+
+.stats {
+  display: flex;
+  gap: 1.5rem;
+}
+.stat {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+.stat-value {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--amber-bright);
+  font-variant-numeric: tabular-nums;
+}
+.stat-label {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-dim);
+}
+
+/* --- Layout -------------------------------------------------------------- */
+
+.layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+@media (max-width: 820px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* --- The Elder Tree ------------------------------------------------------ */
+
+.grove {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 2rem 1rem;
+  background: var(--panel);
+  border: 1px solid var(--panel-edge);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  min-height: 360px;
+}
+
+.floaters {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  border-radius: var(--radius);
+}
+
+.elder-tree {
+  appearance: none;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 8rem;
+  line-height: 1;
+  padding: 1rem;
+  border-radius: 50%;
+  transition: transform 0.06s ease;
+  filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.5));
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.elder-tree:hover {
+  transform: scale(1.03);
+}
+.elder-tree:active {
+  transform: scale(0.96);
+}
+.elder-tree.hit {
+  animation: shake 0.22s ease;
+}
+.elder-tree.felled {
+  animation: fell 0.6s ease;
+}
+@keyframes shake {
+  0%, 100% { transform: rotate(0); }
+  25% { transform: rotate(-4deg) scale(0.97); }
+  75% { transform: rotate(4deg) scale(0.97); }
+}
+@keyframes fell {
+  0% { transform: rotate(0) scale(1); }
+  40% { transform: rotate(-14deg) scale(0.9); filter: drop-shadow(0 12px 24px rgba(0,0,0,0.5)) brightness(1.4); }
+  100% { transform: rotate(0) scale(1); }
+}
+
+.tree-hp {
+  width: min(340px, 90%);
+  text-align: center;
+}
+.tree-hp-bar {
+  height: 14px;
+  border-radius: 999px;
+  background: var(--hp-track);
+  overflow: hidden;
+  border: 1px solid rgba(0, 0, 0, 0.3);
+}
+.tree-hp-fill {
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(90deg, #8a3d34, var(--hp));
+  transition: width 0.12s linear;
+}
+.tree-hp-text {
+  display: inline-block;
+  margin-top: 0.4rem;
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  font-variant-numeric: tabular-nums;
+}
+.tree-meta {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--text-dim);
+}
+.per-click {
+  color: var(--moss);
+  font-weight: 600;
+}
+.dot {
+  margin: 0 0.4rem;
+  opacity: 0.5;
+}
+.tree-meta strong {
+  color: var(--amber);
+}
+
+/* Floating "+N" harvest numbers. */
+.floater {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  font-weight: 700;
+  color: var(--amber-bright);
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
+  animation: floatUp 0.9s ease-out forwards;
+  white-space: nowrap;
+}
+.floater.fell {
+  color: var(--moss);
+  font-size: 1.2rem;
+  letter-spacing: 0.04em;
+}
+@keyframes floatUp {
+  0% { opacity: 0; transform: translate(-50%, -30%) scale(0.8); }
+  20% { opacity: 1; }
+  100% { opacity: 0; transform: translate(-50%, -160%) scale(1.1); }
+}
+
+/* --- Shop (generators + upgrades) ---------------------------------------- */
+
+.shop {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+.shop-panel {
+  background: var(--panel);
+  border: 1px solid var(--panel-edge);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 1rem 1rem 1.15rem;
+}
+.shop-panel h2 {
+  margin: 0.15rem 0 0.75rem;
+  font-size: 1.05rem;
+  color: var(--moss);
+  letter-spacing: 0.03em;
+}
+.shop-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.shop-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  text-align: left;
+  padding: 0.65rem 0.85rem;
+  border-radius: 10px;
+  border: 1px solid rgba(120, 200, 150, 0.12);
+  background: rgba(12, 24, 18, 0.5);
+  color: var(--text);
+  cursor: pointer;
+  transition: background 0.12s, border-color 0.12s, transform 0.06s;
+}
+.shop-item:not(:disabled):hover {
+  transform: translateY(-1px);
+}
+.shop-item.affordable {
+  border-color: rgba(232, 185, 106, 0.45);
+  background: rgba(40, 60, 42, 0.55);
+}
+.shop-item.affordable:hover {
+  background: rgba(52, 74, 52, 0.7);
+}
+.shop-item:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+.shop-item.purchased {
+  opacity: 0.5;
+  border-color: rgba(120, 200, 150, 0.35);
+  background: rgba(30, 50, 36, 0.5);
+}
+
+.shop-icon {
+  font-size: 1.7rem;
+  line-height: 1;
+  flex: 0 0 auto;
+}
+.shop-body {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.shop-name {
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+.shop-count {
+  color: var(--amber);
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+.shop-flavor {
+  font-size: 0.78rem;
+  color: var(--text-dim);
+  line-height: 1.25;
+}
+.shop-rate {
+  font-size: 0.72rem;
+  color: var(--moss-dim);
+  margin-top: 0.15rem;
+}
+.shop-cost {
+  flex: 0 0 auto;
+  font-weight: 700;
+  color: var(--amber-bright);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.shop-item:disabled .shop-cost {
+  color: var(--text-dim);
+}
+.upgrade.purchased .shop-cost {
+  color: var(--moss);
+}
+.upgrade.purchased .shop-cost::after {
+  content: " ✓";
+}
+
+/* --- Footer -------------------------------------------------------------- */
+
+.footer {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--panel-edge);
+}
+.reset-btn {
+  background: transparent;
+  border: 1px solid rgba(201, 106, 106, 0.5);
+  color: var(--danger);
+  padding: 0.4rem 0.9rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.82rem;
+  transition: background 0.12s;
+}
+.reset-btn:hover {
+  background: rgba(201, 106, 106, 0.12);
+}
+.footer-note {
+  font-size: 0.78rem;
+  color: var(--text-dim);
+}
