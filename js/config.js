@@ -133,3 +133,156 @@ export const UPGRADES = [
     effect: { type: 'clickMult', value: 3 },
   },
 ];
+
+// ===========================================================================
+// COMBAT & ROGUELIKE LAYER
+//
+// The Elder Tree is a boss that fights back. Felling it awakens the forest:
+// creatures spawn to defend it, and each fell makes the next tree — and its
+// defenders — deadlier. You spend Heartwood on Siege engines (to fell faster)
+// and Heartwood on Generators (income); you spend permanent Heartseeds, earned
+// by felling, on a grove of bonuses that carry across every run.
+// ===========================================================================
+
+// The player's "grove vitality". Creatures whittle it; felling restores some.
+// Reaching 0 forces a reset (a death), forfeiting one tree's worth of seeds.
+export const PLAYER = {
+  maxHp: 100,
+  fellHeal: 0.35, // fraction of max vitality restored per Elder Tree felled
+};
+
+// Siege engines: bought with Heartwood, deal continuous damage to the Elder
+// Tree but produce NO Heartwood. They fell trees faster (→ more Heartseeds)
+// at the cost of income and of rousing a bigger, angrier tree.
+export const SIEGE = [
+  {
+    id: 'termites',
+    name: 'Heartwood Termites',
+    icon: '🐜',
+    flavor: 'They gnaw the ancient bark without rest.',
+    baseCost: 60,
+    costGrowth: 1.18,
+    dps: 0.6,
+  },
+  {
+    id: 'sawhand',
+    name: 'Sawhand Sprite',
+    icon: '🪚',
+    flavor: 'A woodland spirit with a blade for an arm.',
+    baseCost: 750,
+    costGrowth: 1.18,
+    dps: 6,
+  },
+  {
+    id: 'firebrand',
+    name: 'Firebrand',
+    icon: '🔥',
+    flavor: 'Slow embers eat into the heartwood.',
+    baseCost: 9000,
+    costGrowth: 1.18,
+    dps: 45,
+  },
+  {
+    id: 'ballista',
+    name: 'Root Ballista',
+    icon: '🎯',
+    flavor: 'Hurls sharpened roots deep into the trunk.',
+    baseCost: 110000,
+    costGrowth: 1.18,
+    dps: 320,
+  },
+  {
+    id: 'tempest',
+    name: 'Tempest Bough',
+    icon: '🌩️',
+    flavor: 'Calls the storm down upon the Elder Tree.',
+    baseCost: 1300000,
+    costGrowth: 1.18,
+    dps: 2200,
+  },
+];
+
+// Creatures the Elder Tree spawns to defend itself. Their health and effect
+// strength scale with the CURRENT tree's tier (trees felled this run), so
+// felling faster makes the forest deadlier — the core risk/reward dial.
+//
+//   - thief:  drains Heartwood while alive, then flees after its lifespan
+//   - mauler: deals continuous damage to your vitality until you kill it
+//   - blight: after a short fuse, destroys one of your generators/siege units
+export const CREATURES = {
+  spawn: {
+    baseIntervalSec: 3.2, // seconds between spawns at tier 0
+    minIntervalSec: 0.55, // fastest cadence, however deep you push
+    intervalDecay: 0.92, // interval *= decay^tier
+    maxAlive: 14,
+  },
+  hpBase: 6,
+  hpGrowth: 1.32, // creature hp = hpBase * hpGrowth^tier
+  effectGrowth: 1.28, // effect strength = base * effectGrowth^tier
+  types: [
+    {
+      type: 'thief',
+      name: 'Sap Thief',
+      icon: '🐿️',
+      weight: 3,
+      lifespanSec: 6,
+      stealBase: 4, // Heartwood/sec drained at tier 0
+    },
+    {
+      type: 'mauler',
+      name: 'Bramble Maw',
+      icon: '👹',
+      weight: 2,
+      dmgBase: 5, // vitality/sec dealt at tier 0
+    },
+    {
+      type: 'blight',
+      name: 'Blight Sprite',
+      icon: '🍄',
+      weight: 1,
+      fuseSec: 5, // seconds until it destroys one of your units
+    },
+  ],
+};
+
+// The permanent meta-currency and the run/prestige rules.
+export const PRESTIGE = {
+  currency: { name: 'Heartseeds', icon: '🌰' },
+  // The forest awakens (combat + prestige) once you have ever felled this many.
+  awakenAtLifetimeFelled: 1,
+  // Boon drafts begin once you have ever felled this many trees.
+  boonsAtLifetimeFelled: 3,
+  // Seeds for the n-th tree felled in a run = n. Dying forfeits the most
+  // recent tree's worth (see game.js die()).
+};
+
+// Run-scoped blessings. Drafted 1-of-3 at run start and again on every fell;
+// they STACK within a run and reset when the run does. Effects:
+//   prodMult / clickMult / siegeMult — run multipliers
+//   spawnMult   — multiplies creature spawn interval (>1 = slower)
+//   creatureHpMult / thiefMult — <1 weakens creatures / thieves
+//   cleave      — your strikes hit every creature at once
+//   heal        — instantly restore this fraction of max vitality
+export const BOONS = [
+  { id: 'bounty', name: 'Bountiful Season', icon: '🌸', flavor: '+60% Heartwood production this run.', effect: { prodMult: 1.6 } },
+  { id: 'focus', name: "Woodsman's Focus", icon: '🎯', flavor: 'Your strikes hit 2.5× harder this run.', effect: { clickMult: 2.5 } },
+  { id: 'siegevow', name: 'Siege Vow', icon: '⚔️', flavor: '+80% siege damage this run.', effect: { siegeMult: 1.8 } },
+  { id: 'cleave', name: 'Whirling Edge', icon: '🌀', flavor: 'Your strikes cleave every creature at once.', effect: { cleave: true } },
+  { id: 'ward', name: 'Warding Glyph', icon: '🛡️', flavor: 'Creatures spawn 35% slower this run.', effect: { spawnMult: 1.35 } },
+  { id: 'brittle', name: 'Brittle Bones', icon: '💀', flavor: 'Creatures have 35% less health this run.', effect: { creatureHpMult: 0.65 } },
+  { id: 'miser', name: "Miser's Ward", icon: '🔒', flavor: 'Sap Thieves steal 70% less this run.', effect: { thiefMult: 0.3 } },
+  { id: 'sap', name: 'Rising Sap', icon: '💚', flavor: 'Restore 40% of your vitality now.', effect: { heal: 0.4 } },
+];
+
+// Permanent upgrades bought with Heartseeds; they persist across every run.
+// Each level adds its effect value (multipliers are additive per level, e.g.
+// prodMult 0.25 → +25% per level). No auto-defense here by design — vitality,
+// not automation, is how the grove keeps you alive.
+export const META_UPGRADES = [
+  { id: 'deeproots', name: 'Deep Roots', icon: '🌰', flavor: '+25% Heartwood production per level.', baseCost: 3, costGrowth: 1.6, max: 12, effect: { prodMult: 0.25 } },
+  { id: 'instinct', name: 'Sharpened Instinct', icon: '🗡️', flavor: '+25% click power per level.', baseCost: 3, costGrowth: 1.6, max: 12, effect: { clickMult: 0.25 } },
+  { id: 'vitality', name: 'Heartwood Vitality', icon: '❤️', flavor: '+30 max vitality per level.', baseCost: 4, costGrowth: 1.7, max: 10, effect: { maxHp: 30 } },
+  { id: 'seedcache', name: 'Seed Cache', icon: '🌾', flavor: 'Start each run with +50 Heartwood per level.', baseCost: 5, costGrowth: 1.8, max: 8, effect: { startHeartwood: 50 } },
+  { id: 'softbark', name: 'Soft Bark', icon: '🪵', flavor: 'Elder Trees start with 8% less health per level.', baseCost: 6, costGrowth: 2.0, max: 5, effect: { treeHpFrac: 0.08 } },
+  { id: 'wardpact', name: 'Ward Pact', icon: '🛡️', flavor: 'Creatures spawn 6% slower per level.', baseCost: 6, costGrowth: 2.0, max: 6, effect: { spawnFrac: 0.06 } },
+];

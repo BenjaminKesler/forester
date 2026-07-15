@@ -2,11 +2,15 @@
 
 *Harvest the heartwood of an ancient, mystical forest.*
 
-A small browser-based **idle/clicker game** built with vanilla JavaScript — no framework, no build step. Click the Elder Tree to harvest **Heartwood**, then spend it to grow a forest that harvests for you.
+A small browser-based **idle/clicker meets active-survival roguelike**, built with vanilla JavaScript — no framework, no build step. Click the Elder Tree to harvest **Heartwood**, grow a forest that harvests for you — then survive the forest that fights back.
 
 ## Play
 
-Chop the ancient Elder Tree for Heartwood, buy living generators (Saplings, Forest Wisps, Grove Druids, and more) for passive income, and unlock Ancient Lore upgrades that sharpen your axe and quicken the forest. Fell an Elder Tree and a mightier one rises in its place. Progress saves automatically to your browser.
+Chop the ancient Elder Tree for **Heartwood**, buy living generators (Saplings, Forest Wisps, Grove Druids…) for passive income, lay **Siege** to fell trees faster, and unlock **Ancient Lore** upgrades. Fell an Elder Tree and a mightier one rises in its place.
+
+Felling your first tree **awakens the forest**: the Elder Tree spawns creatures — **Sap Thieves** steal Heartwood, **Blight Sprites** wreck your units, and **Bramble Maws** drain your vitality. Click them down before they overwhelm you. Pushing deeper makes the forest deadlier — that's the point.
+
+Each fell banks **Heartseeds 🌰**. Choose to *Return to Seed* to cash them all in (or die and forfeit one tree's worth), then spend them on the **Everwood** — permanent blessings that carry into every future run. Each run also draws stacking **boons**, a 1-of-3 blessing at run start and on every fell. Progress saves automatically to your browser.
 
 ## Run locally
 

@@ -30,12 +30,17 @@
             <span id="per-second" class="stat-value">0 🪵/s</span>
             <span class="stat-label">from the forest</span>
           </div>
+          <div id="seed-stat" class="stat" hidden>
+            <span id="heartseeds" class="stat-value">0 🌰</span>
+            <span class="stat-label">Heartseeds</span>
+          </div>
         </div>
       </header>
 
       <main class="layout">
-        <!-- Manual harvesting: the Elder Tree -->
+        <!-- Manual harvesting + combat: the Elder Tree and its defenders -->
         <section class="grove">
+          <div id="creatures" class="creatures"></div>
           <div id="floaters" class="floaters"></div>
           <button id="elder-tree" class="elder-tree" aria-label="Chop the Elder Tree">
             <span class="tree-glyph">🌳</span>
@@ -46,11 +51,18 @@
             </div>
             <span id="tree-hp-text" class="tree-hp-text">0 / 0 HP</span>
           </div>
+          <div id="vitality" class="vitality" hidden>
+            <div class="vitality-bar">
+              <div id="vitality-fill" class="vitality-fill"></div>
+            </div>
+            <span id="vitality-text" class="vitality-text">100 / 100 Vitality</span>
+          </div>
           <p class="tree-meta">
             <span id="per-click" class="per-click">1 per strike</span>
             <span class="dot">•</span>
             Ancient trees felled: <strong id="tree-felled">0</strong>
           </p>
+          <div id="boon-banner" class="boon-banner" hidden></div>
         </section>
 
         <!-- Idle production: grow your forest & upgrades -->
@@ -60,16 +72,36 @@
             <div id="generators" class="shop-list"></div>
           </div>
           <div class="shop-panel">
+            <h2>Lay Siege</h2>
+            <p class="panel-note">Damages the Elder Tree — but yields no Heartwood.</p>
+            <div id="siege" class="shop-list"></div>
+          </div>
+          <div class="shop-panel">
             <h2>Ancient Lore</h2>
             <div id="upgrades" class="shop-list"></div>
+          </div>
+          <div id="grove-panel" class="shop-panel grove-panel" hidden>
+            <h2>The Everwood <span id="seed-balance" class="seed-balance">0 🌰</span></h2>
+            <p class="panel-note">Permanent blessings. They endure through every reset.</p>
+            <div id="meta" class="shop-list"></div>
           </div>
         </section>
       </main>
 
       <footer class="footer">
+        <button id="prestige-btn" class="prestige-btn" hidden>Return to Seed</button>
         <button id="reset-btn" class="reset-btn">Start Anew</button>
         <span class="footer-note">Progress saves automatically to this browser.</span>
       </footer>
+    </div>
+
+    <!-- Boon draft: a 1-of-3 blessing chosen at run start and on every fell. -->
+    <div id="draft-overlay" class="draft-overlay" hidden>
+      <div class="draft-modal">
+        <h2 class="draft-title">A Blessing of the Grove</h2>
+        <p class="draft-sub">Choose one. It lasts until this grove returns to seed.</p>
+        <div id="draft-options" class="draft-options"></div>
+      </div>
     </div>
 
     <script type="module" src="js/main.js"></script>
