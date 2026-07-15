@@ -59,6 +59,8 @@ export function cacheDom() {
   el.prestigeBtn = document.getElementById('prestige-btn');
   el.draftOverlay = document.getElementById('draft-overlay');
   el.draftOptions = document.getElementById('draft-options');
+  el.deathOverlay = document.getElementById('death-overlay');
+  el.deathMessage = document.getElementById('death-message');
 }
 
 // `h` collects every callback: onBuyGenerator, onBuySiege, onBuyUpgrade,
@@ -185,6 +187,7 @@ export function render() {
   syncBoonBanner();
   syncPrestige(awake, seedIcon);
   syncDraft();
+  syncDeath();
 }
 
 function syncGenerators() {
@@ -341,6 +344,18 @@ function syncDraft() {
     el.draftOptions.appendChild(card);
   }
   el.draftOverlay.hidden = false;
+}
+
+// The death screen: pauses play (see tick()'s pendingDeath check) until the
+// player clicks through, same as the boon draft.
+function syncDeath() {
+  const info = state.pendingDeath;
+  el.deathOverlay.hidden = !info;
+  if (!info) return;
+  const icon = PRESTIGE.currency.icon;
+  el.deathMessage.textContent =
+    `The forest overwhelms you. You keep ${formatNumber(info.kept)} ${icon}, `
+    + `but the felled tree's ${formatNumber(info.missed)} ${icon} is lost.`;
 }
 
 export function animateTreeHit(felled) {

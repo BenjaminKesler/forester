@@ -121,11 +121,16 @@ function defaultState() {
     runSeeds: 0, // Heartseeds owed if you cash out now
     lastFellSeeds: 0, // seeds from the most recent fell (death penalty)
     activeBoons: [], // boon ids active this run (may repeat)
+    // Combat only spawns once THIS run's first tree falls — even once the
+    // forest has awakened for good (see combatAwake), a fresh run's opening
+    // tree is a pure-clicking tutorial again.
+    runAwakened: false,
 
     // --- ephemeral (never saved) ---
     creatures: [], // live creatures on the grove
     spawnTimer: 0,
     pendingDraft: null, // { options: [boonId, boonId, boonId] } while choosing
+    pendingDeath: null, // { kept, missed } while the death screen is shown
 
     lastSaved: Date.now(),
   };
@@ -232,6 +237,7 @@ function damageTree(amount) {
 function onFell() {
   state.treeFelled += 1;
   state.lifetimeFelled += 1;
+  state.runAwakened = true; // this run's tutorial tree is behind us now
   // Tiered payout: the n-th tree of the run is worth n Heartseeds.
   state.lastFellSeeds = state.treeFelled;
   state.runSeeds += state.lastFellSeeds;
@@ -372,8 +378,11 @@ export function attackCreature(cid) {
 
 // Advance the whole simulation by `dtSeconds`. Returns { died, kept, missed }
 // so the UI can react to a forced reset. The economy always advances; combat
-// is paused while a boon draft is open (a brief, deliberate respite).
+// is paused while a boon draft or the death screen is open (a deliberate
+// respite — see runAwakened for why felling still gates spawns per-run).
 export function tick(dtSeconds) {
+  if (state.pendingDeath) return { died: false };
+
   grantHeartwood(totalProduction() * dtSeconds);
 
   if (state.pendingDraft) return { died: false };
@@ -382,7 +391,7 @@ export function tick(dtSeconds) {
   const sd = siegeDps();
   if (sd > 0) damageTree(sd * dtSeconds);
 
-  if (!combatAwake()) return { died: false };
+  if (!combatAwake() || !state.runAwakened) return { died: false };
 
   // Spawn on a cadence that quickens as the tree grows.
   state.spawnTimer += dtSeconds;
@@ -439,6 +448,7 @@ function startRun() {
   state.runSeeds = 0;
   state.lastFellSeeds = 0;
   state.activeBoons = [];
+  state.runAwakened = false;
   state.creatures = [];
   state.spawnTimer = 0;
   state.pendingDraft = null;
@@ -456,13 +466,20 @@ export function prestige() {
 }
 
 // Forced reset on death: bank owed seeds MINUS the most recent tree's worth.
+// The new run starts immediately, but stays behind the death screen (which
+// pauses tick(), like a boon draft) until the player acknowledges it.
 export function die() {
   const kept = Math.max(0, state.runSeeds - state.lastFellSeeds);
   const missed = state.lastFellSeeds;
   state.heartseeds += kept;
   startRun();
+  state.pendingDeath = { kept, missed };
   save();
   return { kept, missed };
+}
+
+export function acknowledgeDeath() {
+  state.pendingDeath = null;
 }
 
 // --- Boon draft -----------------------------------------------------------
@@ -526,6 +543,7 @@ export function save() {
     runSeeds: state.runSeeds,
     lastFellSeeds: state.lastFellSeeds,
     activeBoons: state.activeBoons,
+    runAwakened: state.runAwakened,
     lastSaved: state.lastSaved,
   };
   try {
@@ -588,11 +606,15 @@ export function load() {
   state.activeBoons = Array.isArray(data.activeBoons)
     ? data.activeBoons.filter((id) => BOONS.some((b) => b.id === id))
     : [];
+  // Older saves predate this flag: infer it from whether this run's tree
+  // has already advanced past the tutorial tier.
+  state.runAwakened = data.runAwakened != null ? !!data.runAwakened : state.treeFelled > 0;
 
   // Ephemeral — always start clear.
   state.creatures = [];
   state.spawnTimer = 0;
   state.pendingDraft = null;
+  state.pendingDeath = null;
   return true;
 }
 

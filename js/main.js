@@ -23,6 +23,7 @@ import {
   save,
   resetGame,
   startAutosave,
+  acknowledgeDeath,
 } from './game.js';
 import {
   cacheDom,
@@ -69,6 +70,11 @@ function init() {
     }
   });
 
+  document.getElementById('death-ok-btn').addEventListener('click', () => {
+    acknowledgeDeath();
+    render();
+  });
+
   startAutosave();
 
   // Game loop: advance the simulation and repaint on a fixed timer. A timer
@@ -76,8 +82,7 @@ function init() {
   // browser when the tab is unfocused, which would freeze the display.
   render();
   setInterval(() => {
-    const { died, kept, missed } = tick(TICK_MS / 1000);
-    if (died) announceDeath(kept, missed);
+    tick(TICK_MS / 1000);
     render();
   }, TICK_MS);
 }
@@ -104,14 +109,6 @@ function onAttackCreature(cid) {
     else spawnFloater(x, y, `-${formatNumber(power)}`, 'creature-hit');
   }
   render();
-}
-
-function announceDeath(kept, missed) {
-  const host = document.getElementById('floaters').getBoundingClientRect();
-  const icon = PRESTIGE.currency.icon;
-  const msg = `The forest overwhelms you! Kept ${formatNumber(kept)} ${icon}, `
-    + `missed ${formatNumber(missed)} ${icon}.`;
-  spawnFloater(host.width / 2, host.height / 2, msg, 'death');
 }
 
 if (document.readyState === 'loading') {
