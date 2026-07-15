@@ -76,8 +76,8 @@ function init() {
   // browser when the tab is unfocused, which would freeze the display.
   render();
   setInterval(() => {
-    const { died } = tick(TICK_MS / 1000);
-    if (died) announceDeath();
+    const { died, kept, missed } = tick(TICK_MS / 1000);
+    if (died) announceDeath(kept, missed);
     render();
   }, TICK_MS);
 }
@@ -106,9 +106,12 @@ function onAttackCreature(cid) {
   render();
 }
 
-function announceDeath() {
+function announceDeath(kept, missed) {
   const host = document.getElementById('floaters').getBoundingClientRect();
-  spawnFloater(host.width / 2, host.height / 2, 'The forest overwhelms you!', 'death');
+  const icon = PRESTIGE.currency.icon;
+  const msg = `The forest overwhelms you! Kept ${formatNumber(kept)} ${icon}, `
+    + `missed ${formatNumber(missed)} ${icon}.`;
+  spawnFloater(host.width / 2, host.height / 2, msg, 'death');
 }
 
 if (document.readyState === 'loading') {

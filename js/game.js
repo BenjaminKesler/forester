@@ -370,9 +370,9 @@ export function attackCreature(cid) {
 
 // --- Tick -----------------------------------------------------------------
 
-// Advance the whole simulation by `dtSeconds`. Returns { died } so the UI can
-// react to a forced reset. The economy always advances; combat is paused while
-// a boon draft is open (a brief, deliberate respite).
+// Advance the whole simulation by `dtSeconds`. Returns { died, kept, missed }
+// so the UI can react to a forced reset. The economy always advances; combat
+// is paused while a boon draft is open (a brief, deliberate respite).
 export function tick(dtSeconds) {
   grantHeartwood(totalProduction() * dtSeconds);
 
@@ -419,8 +419,8 @@ export function tick(dtSeconds) {
   state.creatures = survivors;
 
   if (state.hp <= 0) {
-    die();
-    return { died: true };
+    const { kept, missed } = die();
+    return { died: true, kept, missed };
   }
   return { died: false };
 }
@@ -457,11 +457,12 @@ export function prestige() {
 
 // Forced reset on death: bank owed seeds MINUS the most recent tree's worth.
 export function die() {
-  const claimed = Math.max(0, state.runSeeds - state.lastFellSeeds);
-  state.heartseeds += claimed;
+  const kept = Math.max(0, state.runSeeds - state.lastFellSeeds);
+  const missed = state.lastFellSeeds;
+  state.heartseeds += kept;
   startRun();
   save();
-  return claimed;
+  return { kept, missed };
 }
 
 // --- Boon draft -----------------------------------------------------------
