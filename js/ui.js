@@ -271,6 +271,7 @@ function syncCreatures() {
     }
     node.style.left = `${c.x}%`;
     node.style.top = `${c.y}%`;
+    node.classList.toggle('emerging', c.emerge > 0);
     node.querySelector('.creature-hp-fill').style.width =
       `${Math.max(0, (c.hp / c.maxHp) * 100)}%`;
   }

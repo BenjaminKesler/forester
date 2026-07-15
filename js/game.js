@@ -316,6 +316,8 @@ function spawnCreature() {
     hp,
     maxHp: hp,
     age: 0,
+    // Emerges over this many seconds; attackable but inert until it hits 0.
+    emerge: CREATURES.spawn.emergeSec,
     fuse: pick.fuseSec || 0,
     // Position as a percentage of the grove, kept clear of dead-centre (tree).
     x: 8 + Math.random() * 84,
@@ -393,6 +395,12 @@ export function tick(dtSeconds) {
   // Resolve each living creature's behaviour.
   const survivors = [];
   for (const c of state.creatures) {
+    // Still spawning in: it can be clicked to death, but does not act yet.
+    if (c.emerge > 0) {
+      c.emerge = Math.max(0, c.emerge - dtSeconds);
+      survivors.push(c);
+      continue;
+    }
     c.age += dtSeconds;
     const cfg = creatureConfig(c.type);
 

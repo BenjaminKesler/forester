@@ -20,7 +20,7 @@ export const BASE_CLICK_POWER = 1;
 // count is the hook the future achievement/unlock system will read.
 export const ELDER_TREE = {
   name: 'The Elder Tree',
-  baseHp: 50,
+  baseHp: 200,
   // Each successive tree has hp = baseHp * hpGrowth^(felledCount).
   hpGrowth: 1.6,
   // Bonus Heartwood awarded when a tree is felled = current maxHp * fellBonus.
@@ -215,8 +215,11 @@ export const CREATURES = {
     minIntervalSec: 0.55, // fastest cadence, however deep you push
     intervalDecay: 0.92, // interval *= decay^tier
     maxAlive: 14,
+    // Spawn-in delay: a newly spawned creature emerges over this many seconds.
+    // While emerging it can be attacked but does not act (no steal/maul/fuse).
+    emergeSec: 1.0,
   },
-  hpBase: 6,
+  hpBase: 1,
   hpGrowth: 1.32, // creature hp = hpBase * hpGrowth^tier
   effectGrowth: 1.28, // effect strength = base * effectGrowth^tier
   types: [

@@ -335,6 +335,20 @@ body::before {
 .creature.thief .creature-icon { animation: skitter 0.9s ease-in-out infinite; }
 .creature.mauler .creature-icon { animation: loom 1.4s ease-in-out infinite; }
 .creature.blight .creature-icon { animation: throb 0.7s ease-in-out infinite; }
+
+/* Spawning in: attackable, but visibly not yet a threat — translucent, drained
+   of colour, and holding still (its acting animation is suppressed). */
+.creature.emerging { opacity: 0.55; }
+.creature.emerging .creature-icon {
+  animation: emerge 1s ease-out both;
+  filter: grayscale(0.7) brightness(0.85);
+}
+.creature.emerging .creature-hp { visibility: hidden; }
+@keyframes emerge {
+  0% { transform: scale(0.4); opacity: 0; }
+  60% { opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
 .creature-hp {
   width: 30px;
   height: 4px;
