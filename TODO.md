@@ -5,20 +5,12 @@ each item. Remove an item when it ships (and note it in the commit).
 
 ## Open
 
-1. **Death resets spawning to a fresh state.** After a death, enemies should stop
-   spawning as if it were a fresh game — i.e. the new run's first tree is a
-   pure-clicking tutorial again, no creatures until the player fells a tree.
-   Note the friction: `combatAwake()` is gated on `lifetimeFelled` (persists across
-   runs), so today combat re-arms immediately on the next run. Implementing this
-   likely needs a per-run "awakened" flag (spawning starts only after the first
-   fell *of the current run*), separate from the lifetime unlock.
-
-2. **Value-per-Heartwood indicators.** Below each shop item's price, show its
+1. **Value-per-Heartwood indicators.** Below each shop item's price, show its
    efficiency so the player can instantly compare deals:
    - Generators: **hps/h** — Heartwood/sec produced per Heartwood spent (`rate / cost`).
    - Siege: **dps/h** — tree damage/sec per Heartwood spent (`dps / cost`).
    Render in `syncGenerators()` / `syncSiege()` in `js/ui.js`; the markup already
    has a `[data-rate]` slot per item to extend or sit beside.
 
-3. **Sound effects.** Add audio (clicks, kills, fells, death). Note: CLAUDE.md
+2. **Sound effects.** Add audio (clicks, kills, fells, death). Note: CLAUDE.md
    lists audio as deferred-by-scope, so this is the deliberate re-entry point.
