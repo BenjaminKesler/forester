@@ -217,7 +217,7 @@ export const CREATURES = {
     maxAlive: 14,
     // Spawn-in delay: a newly spawned creature emerges over this many seconds.
     // While emerging it can be attacked but does not act (no steal/maul/fuse).
-    emergeSec: 1.0,
+    emergeSec: 5.0,
   },
   hpBase: 1,
   hpGrowth: 1.32, // creature hp = hpBase * hpGrowth^tier
