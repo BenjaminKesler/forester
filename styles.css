@@ -26,6 +26,13 @@
   box-sizing: border-box;
 }
 
+/* The `hidden` attribute must always win over class rules that set `display`
+   (e.g. .draft-overlay/.stat/.boon-banner set display:flex, which would
+   otherwise override the UA `[hidden] { display: none }`). */
+[hidden] {
+  display: none !important;
+}
+
 body {
   margin: 0;
   min-height: 100vh;
