@@ -66,9 +66,12 @@ body::before {
 #app {
   position: relative;
   z-index: 1;
-  max-width: 1100px;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  max-width: 2000px;
   margin: 0 auto;
-  padding: 1.5rem 1.25rem 2.5rem;
+  padding: 1.25rem 1.5rem 1.25rem;
 }
 
 /* --- Top bar -------------------------------------------------------------- */
@@ -121,15 +124,40 @@ body::before {
 /* --- Layout -------------------------------------------------------------- */
 
 .layout {
+  flex: 1 1 auto;
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: minmax(300px, 1fr) minmax(520px, 1.7fr) minmax(300px, 1fr);
+  grid-template-rows: minmax(0, 1fr); /* row is bounded by the flex height, not content */
   gap: 1.5rem;
-  margin-top: 1.5rem;
+  margin-top: 1.25rem;
+  min-height: 0; /* let grid children scroll instead of stretching the page */
 }
-@media (max-width: 820px) {
+
+/* Side columns scroll on their own so the central arena never leaves view. */
+.col {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 0.35rem; /* breathing room for the scrollbar */
+}
+.col::-webkit-scrollbar { width: 8px; }
+.col::-webkit-scrollbar-thumb {
+  background: rgba(120, 200, 150, 0.18);
+  border-radius: 999px;
+}
+
+/* Below three-column width, stack everything: arena first, then the panels. */
+@media (max-width: 1200px) {
+  #app { height: auto; min-height: 100vh; }
   .layout {
     grid-template-columns: 1fr;
+    grid-template-rows: none;
   }
+  .col { overflow-y: visible; }
+  /* .layout .grove out-specifies the later base `.grove { min-height: 0 }`. */
+  .layout .grove { order: -1; min-height: 420px; }
 }
 
 /* --- The Elder Tree ------------------------------------------------------ */
@@ -141,12 +169,13 @@ body::before {
   align-items: center;
   justify-content: center;
   gap: 1rem;
-  padding: 2rem 1rem;
+  padding: 2rem 1.5rem;
   background: var(--panel);
   border: 1px solid var(--panel-edge);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
-  min-height: 360px;
+  min-height: 0; /* fill the grid track height */
+  overflow: hidden; /* keep creatures & floaters within the arena */
 }
 
 .floaters {
@@ -162,7 +191,7 @@ body::before {
   border: none;
   background: transparent;
   cursor: pointer;
-  font-size: 8rem;
+  font-size: clamp(7rem, 15vh, 12rem);
   line-height: 1;
   padding: 1rem;
   border-radius: 50%;
@@ -389,11 +418,6 @@ body::before {
 
 /* --- Shop (generators + upgrades) ---------------------------------------- */
 
-.shop {
-  display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
-}
 .shop-panel {
   background: var(--panel);
   border: 1px solid var(--panel-edge);

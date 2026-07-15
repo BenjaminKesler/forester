@@ -38,7 +38,20 @@
       </header>
 
       <main class="layout">
-        <!-- Manual harvesting + combat: the Elder Tree and its defenders -->
+        <!-- Left column: spend Heartwood — economy & siege -->
+        <aside class="col col-left">
+          <div class="shop-panel">
+            <h2>Grow the Forest</h2>
+            <div id="generators" class="shop-list"></div>
+          </div>
+          <div class="shop-panel">
+            <h2>Lay Siege</h2>
+            <p class="panel-note">Damages the Elder Tree — but yields no Heartwood.</p>
+            <div id="siege" class="shop-list"></div>
+          </div>
+        </aside>
+
+        <!-- Center: the arena — the Elder Tree and its defenders -->
         <section class="grove">
           <div id="creatures" class="creatures"></div>
           <div id="floaters" class="floaters"></div>
@@ -65,17 +78,8 @@
           <div id="boon-banner" class="boon-banner" hidden></div>
         </section>
 
-        <!-- Idle production: grow your forest & upgrades -->
-        <section class="shop">
-          <div class="shop-panel">
-            <h2>Grow the Forest</h2>
-            <div id="generators" class="shop-list"></div>
-          </div>
-          <div class="shop-panel">
-            <h2>Lay Siege</h2>
-            <p class="panel-note">Damages the Elder Tree — but yields no Heartwood.</p>
-            <div id="siege" class="shop-list"></div>
-          </div>
+        <!-- Right column: knowledge & permanence — lore & the Everwood -->
+        <aside class="col col-right">
           <div class="shop-panel">
             <h2>Ancient Lore</h2>
             <div id="upgrades" class="shop-list"></div>
@@ -85,7 +89,7 @@
             <p class="panel-note">Permanent blessings. They endure through every reset.</p>
             <div id="meta" class="shop-list"></div>
           </div>
-        </section>
+        </aside>
       </main>
 
       <footer class="footer">
